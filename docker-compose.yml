@@ -1,0 +1,26 @@
+version: '3'
+services:
+  webvirtmgr:
+    image: webvirtmgr
+    container_name: webvirtmgr
+    env_file: .env
+    networks:
+      - traefik-network
+    volumes:
+      - /data/vm:/data/vm
+    ports:
+      - "8083:8080"
+      - "6080:6080"
+    labels:
+      traefik.enable: "true"
+      traefik.admin.frontend.rule: "Host:webvirtmgr-admin.${DOMAIN}"
+      traefik.admin.port: "8080"
+      traefik.admin.frontend.auth.basic: "${HTPASSWD}"
+      traefik.websocket.frontend.rule: "Host:webvirtmgr-ws.${DOMAIN}"
+      traefik.websocket.port: "6080"
+    restart: always
+
+
+networks:
+  traefik-network:
+    external: true
